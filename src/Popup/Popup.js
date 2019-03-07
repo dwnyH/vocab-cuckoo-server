@@ -1,12 +1,14 @@
+/* global chrome */
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import WordBook from '../WordBook/WordBook';
+import './Popup.css';
 
-class App extends Component {
+class Popup extends Component {
   render() {
+
     return (
       <div className="App">
-        <div className="wordBook">cuckoo word book</div>
+        <WordBook />
         <div className="options">options</div>
         <div className="alarmOff">today alarm off</div>
       </div>
@@ -14,4 +16,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Popup;
