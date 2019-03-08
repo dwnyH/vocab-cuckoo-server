@@ -1,0 +1,2 @@
+export const PAGE_TYPE_SEND = 'PAGE_TYPE_SEND';
+export const STORAGE_DATA_SEND = 'STORAGE_DATA_SEND';

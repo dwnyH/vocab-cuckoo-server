@@ -1,0 +1,7 @@
+.Header {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 4fr 1fr;
+    align-items: center;
+    margin: 10px 15px;
+}

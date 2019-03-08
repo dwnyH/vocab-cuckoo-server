@@ -1,0 +1,17 @@
+.recentwordsBox {
+    margin: 15px;
+    height: 200px;
+    background-color: rgb(255, 255, 212);
+    overflow-y: scroll;
+
+    .accordion {
+        overflow-x: hidden;
+    }
+
+    .saveWord, .translated {
+        margin: 0;
+    }
+    .savedDate {
+        font-size: 14px;
+    }
+}
