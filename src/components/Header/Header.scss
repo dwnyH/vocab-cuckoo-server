@@ -3,5 +3,21 @@
     grid-auto-flow: column;
     grid-template-columns: 1fr 4fr 1fr;
     align-items: center;
-    margin: 10px 15px;
+    margin: 0px 15px;
+
+    button {
+        color: #2a2b3a;
+        border: none;
+        background: none;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    .home {
+        color: #2a2b3a;
+        cursor: pointer;
+        font-size: 18px;
+        margin-left: 10px;
+        font-weight: 600;
+    }
 }

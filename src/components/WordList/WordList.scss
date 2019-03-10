@@ -1,7 +1,7 @@
 .recentwordsBox {
     margin: 15px;
     height: 200px;
-    background-color: rgb(255, 255, 212);
+    background-color: rgb(244, 241, 234);
     overflow-y: scroll;
 
     .accordion {
@@ -14,4 +14,36 @@
     .savedDate {
         font-size: 14px;
     }
+
+    h4 {
+        margin-top: 0;
+    }
+
+    .accordion__title {
+        background-color: #2a2b3a;
+        color: rgb(243, 243, 243);
+
+    }
+
+    .accordion__body {
+        background-color: #bcd1dd;
+    }
 }
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background: #555;
+}
+
