@@ -3,20 +3,20 @@ import { PAGE_TYPE_SEND, STORAGE_DATA_SEND, ALARM_DATA_SEND } from './ActionType
 export function sendPageType(pageName) {
   return {
     type: PAGE_TYPE_SEND,
-    pageName
+    pageName,
   };
 }
 
 export function sendStoragedData(storageWords) {
   return {
     type: STORAGE_DATA_SEND,
-    storageWords
+    storageWords,
   };
 }
 
 export function sendAlarmData(alarmData) {
   return {
     type: ALARM_DATA_SEND,
-    alarmData
+    alarmData,
   };
 }

@@ -1,6 +1,7 @@
 /* global chrome */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { cloneDeep } from 'lodash';
 import Header from '../../components/Header/Header';
 import WordBook from '../../components/WordBook/WordBook';
 import WordList from '../../components/WordList/WordList';
@@ -8,40 +9,61 @@ import Options from '../../components/Options/Options';
 import * as actions from '../../actions';
 import './Popup.scss';
 
-function Popup(props) {
-  const { sendPageType, page, getChromeStorageData, words, getAlarmInfo, alarmInfo } = props;
+class Popup extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-  return (
-    <div className="App">
-      <Header buttonClick={sendPageType} />
-      {(page === "home" || !page)
-        && <WordList
+  render() {
+    const {
+      sendPageType,
+      page,
+      getChromeStorageData,
+      words,
+      getAlarmInfo,
+      alarmInfo
+    } = this.props;
+
+    return (
+      <div className="App">
+        <Header buttonClick={sendPageType} onClickLogin={this.onClickLogin}/>
+        {(page === 'home' || !page)
+          && (
+          <WordList
             pageClick={sendPageType}
             getChromeStorageData={getChromeStorageData}
             words={words}
           />
-      }
-      {page === "wordBook" && <WordBook />}
-      {page === "option"
-        && <Options
+          )
+        }
+        {page === 'wordBook' && <WordBook />}
+        {page === 'option'
+          && (
+          <Options
             getAlarmInfo={getAlarmInfo}
             alarmInfo={alarmInfo}
-           />
-      }
-    </div>
-  );
+          />
+          )
+        }
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state) => {
-  const {hours, minutes, frequency, scheduledTime} = state.alarmInfo;
+  const { hours,
+    minutes,
+    frequency,
+    scheduledTime,
+  } = state.alarmInfo;
   let today = new Date();
   let frequencyMessage;
   let todayAlarm;
 
   if (!frequency) {
-      frequencyMessage = "alarm once";
+    frequencyMessage = 'alarm once';
   } else {
-      frequencyMessage = `alarm on every ${frequency / 60} hours`;
+    frequencyMessage = `alarm on every ${frequency / 60} hours`;
   }
 
   if (scheduledTime) {
@@ -63,12 +85,12 @@ const mapStateToProps = (state) => {
       hours,
       minutes,
       frequency: frequencyMessage,
-      todayAlarm
-    }
+      todayAlarm,
+    },
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   sendPageType(input) {
     dispatch(actions.sendPageType(input));
   },
@@ -83,10 +105,11 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getAlarmInfo() {
     chrome.storage.sync.get('alarmInfo', (data) => {
-      chrome.alarms.get("cuckooAlarm", (alarm) => {
+      chrome.alarms.get('cuckooAlarm', (alarm) => {
+        const copiedData = cloneDeep(data);
         if (alarm) {
-          data.alarmInfo['scheduledTime'] = alarm.scheduledTime;
-          dispatch(actions.sendAlarmData(data.alarmInfo));
+          copiedData.alarmInfo.scheduledTime = alarm.scheduledTime;
+          dispatch(actions.sendAlarmData(copiedData.alarmInfo));
         }
 
         if (chrome.runtime.lastError) {
@@ -94,7 +117,7 @@ const mapDispatchToProps = (dispatch) => ({
         }
       });
     });
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Popup);

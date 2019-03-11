@@ -3,29 +3,31 @@ import './Header.scss';
 import logo from '../../assets/vocab-cuckoo48.png';
 
 class Header extends Component {
-    constructor(props) {
-        super(props);
-        this.navigationClick = this.navigationClick.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.navigationClick = this.navigationClick.bind(this);
+  }
 
-    navigationClick(ev) {
-        const { buttonClick } = this.props;
+  navigationClick(ev) {
+    const { buttonClick } = this.props;
 
-        buttonClick(ev.currentTarget.className);
-    }
+    buttonClick(ev.currentTarget.className);
+  }
 
-    render() {
-        return (
-            <div className="Header">
-                <img className="logo" src={logo} alt="Logo" />
-                <div className="home" onClick={this.navigationClick}>Vocab Cuckoo</div>
-                <button className="login">Login</button>
-                <button className="option" onClick={this.navigationClick}>
-                    <i className="fas fa-cog"></i>
-                </button>
-            </div>
-        );
-    }
+  render() {
+    const { onClickLogin } = this.props;
+
+    return (
+      <div className="Header">
+        <img className="logo" src={logo} alt="Logo" />
+        <div className="home" onClick={this.navigationClick}>Vocab Cuckoo</div>
+        <button className="login" onClick={onClickLogin} type="submit">Login</button>
+        <button className="option" onClick={this.navigationClick} type="submit">
+          <i className="fas fa-cog" />
+        </button>
+      </div>
+    );
+  }
 }
 
 export default Header;
