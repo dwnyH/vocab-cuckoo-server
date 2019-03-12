@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-console */
 /* eslint-disable class-methods-use-this */
 /* global chrome */
 import React, { Component } from 'react';
@@ -11,44 +13,10 @@ import * as actions from '../../actions';
 import './Popup.scss';
 
 class Popup extends Component {
-  constructor(props) {
-    super(props);
-
-    // this.onClickSignIn = this.onClickSignIn.bind(this);
-  }
 
   componentDidMount() {
-    this.callBackendAPI();
-  }
-
-  callBackendAPI = async () => {
-    const myInit = {
-      method: 'GET',
-    };
-    const response = await fetch('http://192.168.0.81:5000/api/wordLists', myInit);
-    const body = await response.json();
-
-    if (response.status !== 200) {
-      throw Error(body.message);
-    }
-    console.log(body);
-    return body;
-  };
-
-  async getUserInfo(token) {
-    try {
-      const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
-        method: 'GET',
-        headers: new Headers({
-          'Authorization': `Bearer ${token}`
-        }),
-      });
-      const userInfoData = await userInfoResponse.json();
-      console.log('유저인포', userInfoData);
-    } catch (err) {
-      console.log(err);
-      chrome.identity.removeCachedAuthToken({ token });
-    }
+    const { keepLoginState } = this.props;
+    keepLoginState();
   }
 
   render() {
@@ -58,12 +26,18 @@ class Popup extends Component {
       getChromeStorageData,
       words,
       getAlarmInfo,
-      alarmInfo
+      alarmInfo,
+      buttonState,
+      logInOrOut,
     } = this.props;
 
     return (
       <div className="App">
-        <Header buttonClick={sendPageType} onClickSignIn={this.onClickSignIn} />
+        <Header
+          buttonClick={sendPageType}
+          logInOrOut={logInOrOut}
+          buttonState={buttonState}
+        />
         {(page === 'home' || !page)
           && (
           <WordList
@@ -125,6 +99,7 @@ const mapStateToProps = (state) => {
       frequency: frequencyMessage,
       todayAlarm,
     },
+    buttonState: state.buttonState,
   };
 };
 
@@ -133,38 +108,102 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.sendPageType(input));
   },
   getChromeStorageData() {
-    // chrome.storage.sync.get('words', (data) => {
-    //   dispatch(actions.sendStoragedData(data.words));
+    chrome.storage.sync.get('words', (data) => {
+      dispatch(actions.sendStoragedData(data.words));
 
-    //   if (chrome.runtime.lastError) {
-    //     console.log(chrome.runtime.lastError);
-    //   }
-    // });
-  },
-  getAlarmInfo() {
-    // chrome.storage.sync.get('alarmInfo', (data) => {
-    //   chrome.alarms.get('cuckooAlarm', (alarm) => {
-    //     const copiedData = cloneDeep(data);
-    //     if (alarm) {
-    //       copiedData.alarmInfo.scheduledTime = alarm.scheduledTime;
-    //       dispatch(actions.sendAlarmData(copiedData.alarmInfo));
-    //     }
-
-    //     if (chrome.runtime.lastError) {
-    //       console.log(chrome.runtime.lastError);
-    //     }
-    //   });
-    // });
-  },
-  onClickSignIn() {
-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
       if (chrome.runtime.lastError) {
         console.log(chrome.runtime.lastError);
-        alert('현재 시스템에 오류가 있습니다.');
       }
-      // console.log(token);
-      this.getUserInfo(token);
     });
+  },
+  getAlarmInfo() {
+    chrome.storage.sync.get('alarmInfo', (data) => {
+      chrome.alarms.get('cuckooAlarm', (alarm) => {
+        const copiedData = cloneDeep(data);
+        if (alarm) {
+          copiedData.alarmInfo.scheduledTime = alarm.scheduledTime;
+          dispatch(actions.sendAlarmData(copiedData.alarmInfo));
+        }
+
+        if (chrome.runtime.lastError) {
+          console.log(chrome.runtime.lastError);
+        }
+      });
+    });
+  },
+  logInOrOut(btn) {
+    if (btn === 'log in') {
+      chrome.identity.getAuthToken({ interactive: true }, (token) => {
+        const getUserInfo = async (chromeToken) => {
+          try {
+            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
+              method: 'GET',
+              headers: new Headers({
+                Authorization: `Bearer ${chromeToken}`,
+              }),
+            });
+            const userInfo = await userInfoResponse.json();
+            console.log('유저인포', userInfo);
+
+            const {
+              id,
+              email,
+              name,
+              verified_email,
+            } = userInfo;
+
+            if (verified_email) {
+              const jwtTokenResponse = await fetch('http://172.30.1.20:5000/api/auth', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                },
+                body: JSON.stringify({
+                  id,
+                  email,
+                  name,
+                }),
+              });
+              const jwtToken = await jwtTokenResponse.json();
+
+              localStorage.setItem('userToken', jwtToken.token);
+            }
+          } catch (err) {
+            chrome.identity.removeCachedAuthToken({ token: chromeToken });
+            console.log(err);
+          }
+        };
+
+        dispatch(actions.sendButtonState('log out'));
+
+        if (chrome.runtime.lastError) {
+          console.log(chrome.runtime.lastError);
+          alert('현재 시스템에 오류가 있습니다.');
+        } else {
+          getUserInfo(token);
+        }
+      });
+    } else {
+      chrome.identity.getAuthToken({ interactive: false }, (current_token) => {
+        if (chrome.runtime.lastError) {
+          console.log(chrome.runtime.lastError);
+          alert('현재 시스템에 오류가 있습니다.');
+        } else {
+          chrome.identity.removeCachedAuthToken({ token: current_token }, () => {
+            localStorage.removeItem('userToken');
+            dispatch(actions.sendButtonState('log in'));
+          });
+        }
+      });
+    }
+  },
+  keepLoginState() {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      dispatch(actions.sendButtonState('log out'));
+    } else {
+      dispatch(actions.sendButtonState('log in'));
+    }
   },
 });
 

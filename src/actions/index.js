@@ -1,4 +1,9 @@
-import { PAGE_TYPE_SEND, STORAGE_DATA_SEND, ALARM_DATA_SEND } from './ActionTypes';
+import {
+  PAGE_TYPE_SEND,
+  STORAGE_DATA_SEND,
+  ALARM_DATA_SEND,
+  BUTTON_STATE_SEND,
+} from './ActionTypes';
 
 export function sendPageType(pageName) {
   return {
@@ -18,5 +23,12 @@ export function sendAlarmData(alarmData) {
   return {
     type: ALARM_DATA_SEND,
     alarmData,
+  };
+}
+
+export function sendButtonState(buttonState) {
+  return {
+    type: BUTTON_STATE_SEND,
+    buttonState,
   };
 }

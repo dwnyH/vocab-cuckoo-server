@@ -1,5 +1,10 @@
 import { cloneDeep } from 'lodash';
-import { PAGE_TYPE_SEND, STORAGE_DATA_SEND, ALARM_DATA_SEND } from '../actions/ActionTypes';
+import {
+  PAGE_TYPE_SEND,
+  STORAGE_DATA_SEND,
+  ALARM_DATA_SEND,
+  BUTTON_STATE_SEND,
+} from '../actions/ActionTypes';
 
 const initialState = {
   page: 'home',
@@ -10,6 +15,7 @@ const initialState = {
     frequency: null,
     scheduledTime: null,
   },
+  buttonState: 'log in',
 };
 
 export default (state = initialState, action) => {
@@ -29,6 +35,11 @@ export default (state = initialState, action) => {
     case ALARM_DATA_SEND:
       copiedState.page = 'option';
       copiedState.alarmInfo = action.alarmData;
+
+      return copiedState;
+
+    case BUTTON_STATE_SEND:
+      copiedState.buttonState = action.buttonState;
 
       return copiedState;
 
