@@ -15,13 +15,13 @@ class Header extends Component {
   }
 
   render() {
-    const { onClickLogin } = this.props;
+    const { onClickSignIn } = this.props;
 
     return (
       <div className="Header">
         <img className="logo" src={logo} alt="Logo" />
         <div className="home" onClick={this.navigationClick}>Vocab Cuckoo</div>
-        <button className="login" onClick={onClickLogin} type="submit">Login</button>
+        <button className="login" onClick={onClickSignIn} type="submit">Login</button>
         <button className="option" onClick={this.navigationClick} type="submit">
           <i className="fas fa-cog" />
         </button>
