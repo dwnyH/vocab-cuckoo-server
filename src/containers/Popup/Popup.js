@@ -13,7 +13,6 @@ import * as actions from '../../actions';
 import './Popup.scss';
 
 class Popup extends Component {
-
   componentDidMount() {
     const { keepLoginState } = this.props;
     keepLoginState();
@@ -153,7 +152,7 @@ const mapDispatchToProps = dispatch => ({
             } = userInfo;
 
             if (verified_email) {
-              const jwtTokenResponse = await fetch('http://172.30.1.20:5000/api/auth', {
+              const jwtTokenResponse = await fetch('http://172.30.1.18:5000/api/auth', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json; charset=utf-8',
@@ -166,15 +165,16 @@ const mapDispatchToProps = dispatch => ({
               });
               const jwtToken = await jwtTokenResponse.json();
 
-              localStorage.setItem('userToken', jwtToken.token);
+              if (jwtToken) {
+                localStorage.setItem('userToken', jwtToken.token);
+                dispatch(actions.sendButtonState('log out'));
+              }
             }
           } catch (err) {
             chrome.identity.removeCachedAuthToken({ token: chromeToken });
             console.log(err);
           }
         };
-
-        dispatch(actions.sendButtonState('log out'));
 
         if (chrome.runtime.lastError) {
           console.log(chrome.runtime.lastError);
@@ -184,13 +184,20 @@ const mapDispatchToProps = dispatch => ({
         }
       });
     } else {
-      chrome.identity.getAuthToken({ interactive: false }, (current_token) => {
+      chrome.identity.getAuthToken({ interactive: false }, (currentToken) => {
         if (chrome.runtime.lastError) {
           console.log(chrome.runtime.lastError);
           alert('현재 시스템에 오류가 있습니다.');
         } else {
-          chrome.identity.removeCachedAuthToken({ token: current_token }, () => {
-            localStorage.removeItem('userToken');
+          chrome.identity.removeCachedAuthToken({ token: currentToken }, async () => {
+            try {
+              await fetch(`https://accounts.google.com/o/oauth2/revoke?token=${currentToken}`, {
+                method: 'GET',
+              });
+            } catch (err) {
+              console.log(err);
+            }
+
             dispatch(actions.sendButtonState('log in'));
           });
         }
