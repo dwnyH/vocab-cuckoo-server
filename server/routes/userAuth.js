@@ -4,64 +4,53 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { secret } = require('../db/credentials');
 
-
 router.post('/auth', (req, res) => {
-  console.log(req.body);
-
-  const { id, email, name } = req.body;
   const makeJwtToken = (userInfo) => {
     try {
-      jwt.sign({
-        id: userInfo.id,
-        email: userInfo.email,
-        name: userInfo.name,
-      },
-      secret,
-      {
-        issuer: 'vocab-cuckoo',
-        subject: 'userInfo',
-      }, (error, token) => {
-        if (error) {
-          console.log(error);
-          res.status(403).json({
-            message: error.message,
-          });
-        } else {
-          res.status(200).json({
-            message: 'logged in successfully',
-            token,
-          });
-        }
-      });
+      jwt.sign(userInfo,
+        secret,
+        {
+          issuer: 'vocab-cuckoo',
+          subject: 'userInfo',
+        }, (error, token) => {
+          if (error) {
+            console.log(error);
+            res.status(403).json({
+              message: error.message,
+            });
+          } else {
+            res.status(200).json({
+              message: 'logged in successfully',
+              token,
+              id: userInfo.id,
+            });
+          }
+        });
     } catch (error) {
       console.log(error);
     }
   };
 
-  User.findOne({ id }, (err, user) => {
+  User.findOne({ id: req.body.id }, async (err, user) => {
     if (err) {
       console.log(err);
     } else {
       if (user) {
+        const registeredUser = await User.findOne({ id: req.body.id });
+        req.body.id = registeredUser._id;
         makeJwtToken(req.body);
       } else {
-        const newUser = new User({
-          id,
-          email,
-          name,
+        const newUser = new User(req.body);
+
+        newUser.save((error) => {
+          console.log(error);
         });
-        newUser
-          .save((error) => {
-            console.log(2, error);
-          })
-          .then((userInfo) => {
-            makeJwtToken(userInfo);
-          });
+        const newRegisteredUser = await User.findOne({ id: req.body.id });
+        req.body.id = newRegisteredUser._id;
+        makeJwtToken(req.body);
       }
     }
   });
 });
-// router.post('/wordLists');
-// router.delete('');
 
 module.exports = router;

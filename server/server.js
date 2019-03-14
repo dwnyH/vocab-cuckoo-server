@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { mongoose } = require('./db/mongoose');
-const wordLists = require('./routes/wordLists');
+const users = require('./routes/users');
 const userAuth = require('./routes/userAuth');
+const authMiddleware = require('./middlewares/auth');
 
 const app = express();
 
@@ -19,10 +20,6 @@ app.use(bodyParser.json());
 app.listen(5000, () => console.log('Listening on port 5000'));
 
 app.use(express.static('dist'));
-app.use('/api', userAuth);
-app.use('/api/wordLists', wordLists);
-
-app.get('/express_backend', (req, res) => {
-  console.log(req);
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
-});
+app.use('/', userAuth);
+app.use('/users', authMiddleware);
+app.use('/users', users);

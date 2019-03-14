@@ -3,6 +3,8 @@ import {
   STORAGE_DATA_SEND,
   ALARM_DATA_SEND,
   BUTTON_STATE_SEND,
+  MONTH_LIST_SEND,
+  VOCAB_LIST_SEND,
 } from './ActionTypes';
 
 export function sendPageType(pageName) {
@@ -30,5 +32,20 @@ export function sendButtonState(buttonState) {
   return {
     type: BUTTON_STATE_SEND,
     buttonState,
+  };
+}
+
+export function sendMonthList(monthLists) {
+  return {
+    type: MONTH_LIST_SEND,
+    monthLists,
+  };
+}
+
+export function sendVocabs(month, vocabLists) {
+  return {
+    type: VOCAB_LIST_SEND,
+    month,
+    vocabLists,
   };
 }
