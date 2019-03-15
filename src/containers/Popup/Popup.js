@@ -1,6 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable no-console */
-/* eslint-disable class-methods-use-this */
 /* global chrome */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
