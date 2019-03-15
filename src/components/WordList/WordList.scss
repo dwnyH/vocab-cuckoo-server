@@ -20,14 +20,28 @@
     }
 
     .accordion__title {
-        background-color: #2a2b3a;
-        color: rgb(243, 243, 243);
-
+        // background-color: #2a2b3a;
+        // color: rgb(243, 243, 243);
+        background-color: rgba(0,0,0, .4);
+        color: #ffddcc;
     }
-
-    .accordion__body {
-        background-color: #bcd1dd;
+    .accordion__item {
+        // background: rgba(92,129,202,1);
+        // background: 
+        // -webkit-linear-gradient(
+        //     left, 
+        //     rgba(92,129,202,1) 0%, 
+        //     rgba(249,140,112,1) 100%
+        // );
+        background: 
+            -webkit-linear-gradient(left, #e6a8e8,#6bb6bd);
     }
+}
+
+.recentWordTitle {
+    margin: 20px 18px 12px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 ::-webkit-scrollbar-track {
