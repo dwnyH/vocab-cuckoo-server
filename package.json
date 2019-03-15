@@ -3,9 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-scripts": "2.1.5"
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "eslint-config-airbnb": "^17.1.0",
+    "express": "^4.16.4",
+    "firebase": "^5.8.6",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "mongoose": "^5.4.18",
+    "morgan": "^1.9.1",
+    "react": "^16.8.4",
+    "react-accessible-accordion": "^2.4.5",
+    "react-dom": "^16.8.4",
+    "react-redux": "^6.0.1",
+    "react-scripts": "2.1.5",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -14,12 +28,38 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "airbnb"
+    ],
+    "rules": {
+      "linebreak-style": 0,
+      "react/jsx-filename-extension": 0,
+      "react/sort-comp": 0,
+      "no-alert": 0,
+      "no-underscore-dangle": 0,
+      "jsx-a11y/click-events-have-key-events": 0
+    }
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "babel-core": "^7.0.0-bridge.0"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
 }

@@ -22,12 +22,16 @@ class Popup extends Component {
     const {
       sendPageType,
       page,
-      getChromeStorageData,
-      words,
+      getChromeStorageVocabs,
+      chromeStorageVocabs,
       getAlarmInfo,
       alarmInfo,
       buttonState,
       logInOrOut,
+      monthLists,
+      getSavedMonthLists,
+      dbVocabLists,
+      getDbVocabs,
     } = this.props;
 
     return (
@@ -41,12 +45,19 @@ class Popup extends Component {
           && (
           <WordList
             pageClick={sendPageType}
-            getChromeStorageData={getChromeStorageData}
-            words={words}
+            getChromeStorageVocabs={getChromeStorageVocabs}
+            chromeStorageVocabs={chromeStorageVocabs}
           />
           )
         }
-        {page === 'wordBook' && <WordBook />}
+        {page === 'wordBook' && (
+          <WordBook
+            monthLists={monthLists}
+            getSavedMonthLists={getSavedMonthLists}
+            dbVocabLists={dbVocabLists}
+            getDbVocabs={getDbVocabs}
+          />
+        )}
         {page === 'option'
           && (
           <Options
@@ -89,9 +100,26 @@ const mapStateToProps = (state) => {
     }
   }
 
+  const sortedVocabs = {};
+  state.dbVocabLists.vocabs.forEach((vocab) => {
+    const { savedAt, word, translated } = vocab;
+
+    if (sortedVocabs.hasOwnProperty(savedAt)) {
+      sortedVocabs[savedAt].push({
+        word,
+        translated,
+      });
+    } else {
+      sortedVocabs[savedAt] = [{
+        word,
+        translated,
+      }];
+    }
+  });
+
   return {
     page: state.page,
-    words: state.words,
+    chromeStorageVocabs: state.chromeStorageVocabs,
     alarmInfo: {
       hours,
       minutes,
@@ -99,6 +127,8 @@ const mapStateToProps = (state) => {
       todayAlarm,
     },
     buttonState: state.buttonState,
+    monthLists: state.dbVocabLists.months,
+    dbVocabLists: sortedVocabs,
   };
 };
 
@@ -106,7 +136,7 @@ const mapDispatchToProps = dispatch => ({
   sendPageType(input) {
     dispatch(actions.sendPageType(input));
   },
-  getChromeStorageData() {
+  getChromeStorageVocabs() {
     chrome.storage.sync.get('words', (data) => {
       dispatch(actions.sendStoragedData(data.words));
 
@@ -142,8 +172,6 @@ const mapDispatchToProps = dispatch => ({
               }),
             });
             const userInfo = await userInfoResponse.json();
-            console.log('유저인포', userInfo);
-
             const {
               id,
               email,
@@ -152,7 +180,7 @@ const mapDispatchToProps = dispatch => ({
             } = userInfo;
 
             if (verified_email) {
-              const jwtTokenResponse = await fetch('http://172.30.1.18:5000/api/auth', {
+              const jwtTokenResponse = await fetch('http://192.168.0.81:5000/auth', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json; charset=utf-8',
@@ -167,6 +195,8 @@ const mapDispatchToProps = dispatch => ({
 
               if (jwtToken) {
                 localStorage.setItem('userToken', jwtToken.token);
+                localStorage.setItem('userId', jwtToken.id);
+                console.log('토큰', jwtToken);
                 dispatch(actions.sendButtonState('log out'));
               }
             }
@@ -198,6 +228,8 @@ const mapDispatchToProps = dispatch => ({
               console.log(err);
             }
 
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userId');
             dispatch(actions.sendButtonState('log in'));
           });
         }
@@ -206,10 +238,54 @@ const mapDispatchToProps = dispatch => ({
   },
   keepLoginState() {
     const token = localStorage.getItem('userToken');
-    if (token) {
+    const userId = localStorage.getItem('userId');
+    if (token && userId) {
       dispatch(actions.sendButtonState('log out'));
     } else {
       dispatch(actions.sendButtonState('log in'));
+    }
+  },
+  async getSavedMonthLists() {
+    const token = localStorage.getItem('userToken');
+    const id = localStorage.getItem('userId');
+    let getMonthResponse;
+
+    if (token && id) {
+      try {
+        getMonthResponse = await fetch(`http://192.168.0.81:5000/users/${id}/months`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-auth': token,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      const monthListsData = await getMonthResponse.json();
+      dispatch(actions.sendMonthList(monthListsData.monthLists));
+    }
+  },
+  async getDbVocabs(month) {
+    const token = localStorage.getItem('userToken');
+    const id = localStorage.getItem('userId');
+    let getVocabsResponse;
+
+    if (token && id) {
+      try {
+        getVocabsResponse = await fetch(`http://192.168.0.81:5000/users/${id}/${month}/vocabularies`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-auth': token,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      const vocabsResponseData = await getVocabsResponse.json();
+      console.log(vocabsResponseData);
+      dispatch(actions.sendVocabs(month, vocabsResponseData.vocabularies));
     }
   },
 });

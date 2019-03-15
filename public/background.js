@@ -11,11 +11,14 @@ const contextMenuItem = {
 };
 
 const isEnglish = text => (
-  (text.charCodeAt() >= 65 && text.charCodeAt() <= 90) || (text.charCodeAt() >= 97 && text.charCodeAt() <= 122) || (text.charCodeAt() === 32)
+  (text.charCodeAt() >= 65 && text.charCodeAt() <= 90)
+    || (text.charCodeAt() >= 97 && text.charCodeAt() <= 122)
+    || (text.charCodeAt() === 32)
 );
 
 const isKorean = text => (
-  (text.charCodeAt() >= 45032 && text.charCodeAt() <= 55203) || (text.charCodeAt() === 32)
+  (text.charCodeAt() >= 45032 && text.charCodeAt() <= 55203)
+    || (text.charCodeAt() === 32)
 );
 
 const dataDuplicationCheck = (storagedTextsInfo, newText) => (
@@ -35,6 +38,36 @@ const requestTranslatedData = async (text, translateTo) => {
   }
 };
 
+const updateDB = async (selectedWord) => {
+  const token = localStorage.getItem('userToken');
+  const id = localStorage.getItem('userId');
+
+  if (token && id) {
+    const { text, date, translated } = selectedWord;
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+
+    const savedMonth = `${monthNames[new Date(date).getMonth()]}, ${new Date(date).getFullYear()}`;
+    const resultResponse = await fetch(`http://192.168.0.81:5000/users/${id}/words`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-auth': token,
+      },
+      body: JSON.stringify({
+        savedAt: date,
+        savedMonth,
+        word: text,
+        translated,
+      }),
+    });
+    if (resultResponse.status !== 200) {
+      window.alert('시스템에 오류가 있어 wordbook에 저장할 수 없습니다.');
+    }
+  }
+};
+
 const updateStorage = (wordStorage, selectedInfo) => {
   if (wordStorage.length < 10) {
     wordStorage.unshift(selectedInfo);
@@ -47,6 +80,7 @@ const updateStorage = (wordStorage, selectedInfo) => {
     words: wordStorage,
   }, () => {
     window.alert(`단어 ${selectedInfo.text} 가 저장되었습니다 :)`);
+    updateDB(selectedInfo);
 
     if (chrome.runtime.lastError) {
       console.log(chrome.runtime.lastError);
@@ -190,7 +224,7 @@ const handleAlarm = () => {
 
       answerNotifOptions = {
         type: 'basic',
-        iconUrl: '/icons/birdIcon-48.png',
+        iconUrl: '/icons/vocab-cuckoo48.png',
         title: alertWord,
         message: translatedWord,
         buttons: [{

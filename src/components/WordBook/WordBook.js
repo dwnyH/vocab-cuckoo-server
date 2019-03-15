@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -65,25 +65,31 @@ class WordBook extends Component {
     const vocabs = Object.keys(dbVocabLists).map(date => (
       <AccordionItem>
         <AccordionItemTitle>
-          <h3 className="savedWord">{date}</h3>
+          <h4 className="savedWord">{date}</h4>
         </AccordionItemTitle>
         <AccordionItemBody>
-          <table>
-            <thread>
-              <tr>
-                <th>vocabulary</th>
-                <th>definition</th>
-              </tr>
-            </thread>
-            <tbody>
-              {dbVocabLists[date].map(vocabInfo => (
+          <div className="tbl-header">
+            <table>
+              <thead>
                 <tr>
-                  <td>{vocabInfo.word}</td>
-                  <td>{vocabInfo.translated}</td>
+                  <th>vocabulary</th>
+                  <th>definition</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+            </table>
+          </div>
+          <div className="tbl-content">
+            <table>
+              <tbody>
+                {dbVocabLists[date].map(vocabInfo => (
+                  <tr>
+                    <td>{vocabInfo.word}</td>
+                    <td>{vocabInfo.translated}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </AccordionItemBody>
       </AccordionItem>
     ));
@@ -92,9 +98,8 @@ class WordBook extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
-      <Accordion>
+      <Accordion className="wordBookBox">
         {this.props.monthLists
           ? this.makeMonthList()
           : '저장된 데이터가 없습니다.'

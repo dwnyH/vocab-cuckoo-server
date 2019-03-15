@@ -4,7 +4,7 @@ import {
   ALARM_DATA_SEND,
   BUTTON_STATE_SEND,
   MONTH_LIST_SEND,
-  VOCAB_LIST_SEND,
+  DB_VOCABS_SEND,
 } from './ActionTypes';
 
 export function sendPageType(pageName) {
@@ -44,7 +44,7 @@ export function sendMonthList(monthLists) {
 
 export function sendVocabs(month, vocabLists) {
   return {
-    type: VOCAB_LIST_SEND,
+    type: DB_VOCABS_SEND,
     month,
     vocabLists,
   };

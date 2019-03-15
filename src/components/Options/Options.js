@@ -24,8 +24,9 @@ class Options extends Component {
 
   alarmOff(ev) {
     const { getAlarmInfo } = this.props;
+    const todayAlarmBtn = ev.target.innerText;
 
-    if (ev.target.innerText === 'Today alarm off') {
+    if (todayAlarmBtn === 'Today alarm off') {
       chrome.runtime.sendMessage({
         type: 'alarmOff',
       }, () => {
@@ -51,14 +52,14 @@ class Options extends Component {
   frequencyChange(ev) {
     const frequency = ev.target.value;
     this.setState({
-      frequency
+      frequency,
     });
   }
 
   timeChange(ev) {
     const time = ev.target.value;
     this.setState({
-      time
+      time,
     });
   }
 
@@ -75,6 +76,7 @@ class Options extends Component {
         minutes: Number(time.substring(time.indexOf(':') + 1)),
         frequency: InputFrequency,
       };
+
       chrome.runtime.sendMessage({
         type: 'alarmSet',
         alarmInfo,

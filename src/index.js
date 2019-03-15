@@ -14,7 +14,7 @@ ReactDOM.render(
     <Provider store={store}>
         <Popup />
     </Provider>,
-    document.getElementById('root')
+    document.getElementById('root'),
 );
 
 // If you want your Popup to work offline and load faster, you can change

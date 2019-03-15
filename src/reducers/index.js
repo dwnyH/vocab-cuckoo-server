@@ -6,7 +6,7 @@ import {
   ALARM_DATA_SEND,
   BUTTON_STATE_SEND,
   MONTH_LIST_SEND,
-  VOCAB_LIST_SEND,
+  DB_VOCABS_SEND,
 } from '../actions/ActionTypes';
 
 const initialState = {
@@ -54,7 +54,7 @@ export default (state = initialState, action) => {
 
       return copiedState;
 
-    case VOCAB_LIST_SEND:
+    case DB_VOCABS_SEND:
       const { vocabLists } = action;
       const vocabInfo = vocabLists.map(vocab => ({
         savedAt: moment(vocab.savedAt).format('MMM Do'),
