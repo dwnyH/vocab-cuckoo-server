@@ -32,6 +32,11 @@ jobs:
             echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> ~/.aws/config
             echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> ~/.aws/config
       - run:
+          # 초기화
+          name: initialization
+          command: |
+            eb init
+      - run:
           # 배포
           name: Deploy to env
           command: |
