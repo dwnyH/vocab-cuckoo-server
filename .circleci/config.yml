@@ -35,7 +35,7 @@ jobs:
           # 배포
           name: Deploy to env
           command: |
-            eb deploy vocab-cuckoo-server
+            eb deploy VocabCuckoo-env
 workflows:
   version: 2
   build-deploy:
