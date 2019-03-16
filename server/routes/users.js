@@ -3,8 +3,6 @@ const Word = require('../models/Word');
 const User = require('../models/User');
 
 router.post('/:user_id/words', async (req, res) => {
-  console.log(req.body);
-
   const {
     savedAt,
     savedMonth,
@@ -43,7 +41,9 @@ router.get('/:user_id/months', async (req, res) => {
       monthLists: currentUser.monthLists,
     });
   } catch (error) {
-    res.sendStatus(500);
+    res.status(500).json({
+      message: serverError
+    });
   }
 });
 
@@ -57,7 +57,9 @@ router.get('/:user_id/:selected_month/vocabularies', async (req, res) => {
       vocabularies,
     });
   } catch (error) {
-    res.sendStatus(500);
+    res.status(500).json({
+      message: serverError
+    });
   }
 });
 
