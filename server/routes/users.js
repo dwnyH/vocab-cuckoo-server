@@ -50,9 +50,8 @@ router.get('/:user_id/months', async (req, res) => {
 router.get('/:user_id/:selected_month/vocabularies', async (req, res) => {
   const { user_id, selected_month } = req.params;
   try {
-    console.log(user_id, selected_month);
     const vocabularies = await Word.find({ user_id, savedMonth: selected_month });
-    console.log(vocabularies);
+  
     res.status(200).json({
       vocabularies,
     });
