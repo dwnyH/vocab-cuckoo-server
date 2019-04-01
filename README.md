@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 # Vocab Cuckoo
 
 Vocab-cuckoo는 웹 상에서 접하는 단어들로 영어공부를 할 수 있게 도와주는 크롬익스텐션입니다. 우클릭을 통해 단어를 한국어 또는 영어로 번역된 형태와 함께 저장할 수 있도록 해주며, 사용자가 설정한 시간에 따라 저장한 단어를 알림형태로 띄워줍니다. 
