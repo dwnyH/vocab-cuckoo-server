@@ -107,6 +107,6 @@ npm run server
 - db에 저장된 단어 해가 바뀌면 지워지도록 하는 기능 추가
 - unit test, integration test
 
-
+------
 
 Special Thanks to [Ken Huh](https://github.com/ken123777 "ken huh") / Vanilla Coding 
