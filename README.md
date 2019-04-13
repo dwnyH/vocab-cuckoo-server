@@ -5,9 +5,6 @@ Vocab-cuckoo는 웹 상에서 접하는 단어들로 영어공부를 할 수 있
 
 ## **Preview**
 
-**녹화 순서
-: 우클릭 통해 사진 저장 -> 최근 저장된 단어들에서 확인 -> 날짜별 wordbook에서 확인 -> 알람 설정 -> 알람 확인**
-
 ![preview](https://github.com/hiiiii11/vocab-cuckoo-client/blob/master/src/assets/%5BSHANA%5Dvocab-cuckoo.gif)
 
 
